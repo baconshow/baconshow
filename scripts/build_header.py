@@ -31,6 +31,7 @@ LAST_SLOT_SECONDS = 6.0
 FADE_SECONDS = 0.5
 PIG_SCALE = 2
 PIG_LIFT = 4
+EAR_HEIGHT = 1
 PIG_COLORS = {"p": "#e8a3ae", "d": "#c97f8c", "t": "#c97f8c", "n": "#c97f8c", "k": "#1f2328"}
 FIRST_TICK_INSET = 16
 LAST_TICK_INSET = 30
@@ -43,23 +44,25 @@ def pig_pixels(level):
     body_h = 4 + round(level * 5 / last_level)
     head_rise = 2 if level < 3 else 1 if level < 6 else 0
     legs = 2 if level < 5 else 1
-    grid = [["."] * (body_w + 3) for _ in range(head_rise + body_h + legs)]
+    grid = [["."] * (body_w + 3) for _ in range(EAR_HEIGHT + head_rise + body_h + legs)]
+    body_top = EAR_HEIGHT + head_rise
 
-    for row in range(head_rise):
+    grid[0][body_w - 2] = "p"
+    for row in range(EAR_HEIGHT, body_top):
         for col in range(body_w - 3, body_w + 1):
             grid[row][col] = "p"
     for row in range(body_h):
         rounded = body_h >= 6 and row in (0, body_h - 1)
         for col in range(2 if rounded else 1, body_w + 1 - (1 if rounded and not head_rise else 0)):
-            grid[head_rise + row][col] = "p"
-    for row in range(head_rise + body_h, len(grid)):
+            grid[body_top + row][col] = "p"
+    for row in range(body_top + body_h, len(grid)):
         for col in (2, 3, body_w - 2, body_w - 1):
             grid[row][col] = "d"
 
-    grid[1][body_w - 1] = "k"
-    for row in (2, 3):
+    grid[EAR_HEIGHT + 1][body_w - 1] = "k"
+    for row in (EAR_HEIGHT + 2, EAR_HEIGHT + 3):
         grid[row][body_w + 1] = grid[row][body_w + 2] = "n"
-    grid[head_rise + 1][0] = "t"
+    grid[body_top + 1][0] = "t"
     return grid
 
 
